@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Events</title>
+</head>
+<body>
+	<div>
+		<h1>Welcome, <%= current_user.first_name %></h1>
+		<a href="/user/<%= current_user.id %>">Edit My Profile</a>
+	    <form action='/sessions/<%= current_user.id %>' method='post'>
+	      <input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>'>
+	      <input type='hidden' name='_method' value='delete'>
+	      <input type='submit' value='Log Out'>
+	    </form>
+	</div>
+
+	<div>
+		<h3>Here are some of the events in your state:</h3>
+		<table border="1" width="100%">
+			<tr>
+				<th>Name</th>
+				<th>Date</th>
+				<th>Location</th>
+				<th>Host</th>
+				<th>Action/Status</th>
+			</tr>
+		<% if @events_in_state %>
+			<% @events_in_state.each do |e| %> 
+				<tr>
+					<td><a href="/events/<%= e.id %>"><%= e.name %></a></td>
+					<td><%= e.date %></td>
+					<td><%= e.location %></td>
+					<td><%= e.user.first_name %></td>
+					<td>
+				<% if e.user_id != current_user.id %>
+					<form action="/joins" method="POST">
+						<input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>'>
+						<input type="hidden" name="user_id" value="<%= current_user.id %>">
+						<input type="hidden" name="event_id" value="<%= e.id %>">
+						<input type="submit" value="Join">
+					</form>
+					<form action="/joins/<%= e.id %>" method="POST">
+						<input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>'>
+						<input type='hidden' name='_method' value='DELETE'>
+						<input type="hidden" name="user_id" value="<%= current_user.id %>">
+						<input type="submit" value="Cancel">
+					</form>
+				<% else %>
+					<a href="events/<%= e.id %>/edit">Edit Event</a>
+					<form action="/events/<%= e.id %>" method="POST">
+						<input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>'>
+						<input type='hidden' name='_method' value='DELETE'>
+						<input type="submit" value="Delete">
+					</form>
+				<% end %>
+				</td>
+				</tr>
+			<% end %>
+		<% else %>
+			<p>No events in your state yet! Create an event below!</p>	 
+		<% end %>
+		</table>
+	</div>
+
+	<div>
+		<h3>Here are some of the events in other states:</h3>
+		<table border="1" width="100%">
+			<tr>
+				<th>Name</th>
+				<th>Date</th>
+				<th>Location</th>
+				<th>State</th>
+				<th>Host</th>
+				<th>Action/Status</th>
+			</tr>
+		<% if @events_elsewhere %>
+		<% @events_elsewhere.each do |e| %> 
+			<tr>
+				<td><a href="/events/<%= e.id %>"><%= e.name %></a></td>				
+				<td><%= e.date %></td>
+				<td><%= e.location %></td>
+				<td><%= e.state %></td>
+				<td><%= e.user.first_name %></td>
+				<td>
+					<% if e.user_id != current_user.id %>
+						<form action="/joins" method="POST">
+							<input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>'>
+							<input type="hidden" name="user_id" value="<%= current_user.id %>">
+							<input type="hidden" name="event_id" value="<%= e.id %>">
+							<input type="submit" value="Join">
+						</form>
+						<form action="/joins/<%= e.id %>" method="POST">
+							<input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>'>
+							<input type='hidden' name='_method' value='DELETE'>
+							<input type="hidden" name="user_id" value="<%= current_user.id %>">
+							<input type="submit" value="Cancel">
+						</form>
+					<% else %>
+						<a href="events/<%= e.id %>/edit">Edit Event</a>
+						<form action="/events/<%= e.id %>" method="POST">
+							<input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>'>
+							<input type='hidden' name='_method' value='DELETE'>
+							<input type="submit" value="Delete">
+						</form>
+					<% end %>
+				</td>
+			</tr>
+		<% end %>
+		<% else %>
+			<p>No events anywhere else! Stay home!!!</p>	 
+		<% end %>
+		</table>
+	</div>
+
+	<div>
+		<h3>Add an Event</h3>
+		<form action="/events" method="POST">
+			<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+			<input type="hidden" name="event[user_id]" value="<%= current_user.id %>">
+			<input type="text" name="event[name]" placeholder="Event Name">
+			<input type="date" name="event[date]">
+			<input type="text" name="event[location]" placeholder="Location">
+			<select name="event[state]">
+				<option value="AL">Alabama</option>
+				<option value="AK">Alaska</option>
+				<option value="AZ">Arizona</option>
+				<option value="AR">Arkansas</option>
+				<option value="CA">California</option>
+				<option value="CO">Colorado</option>
+				<option value="CT">Connecticut</option>
+				<option value="DE">Delaware</option>
+				<option value="DC">District Of Columbia</option>
+				<option value="FL">Florida</option>
+				<option value="GA">Georgia</option>
+				<option value="HI">Hawaii</option>
+				<option value="ID">Idaho</option>
+				<option value="IL">Illinois</option>
+				<option value="IN">Indiana</option>
+				<option value="IA">Iowa</option>
+				<option value="KS">Kansas</option>
+				<option value="KY">Kentucky</option>
+				<option value="LA">Louisiana</option>
+				<option value="ME">Maine</option>
+				<option value="MD">Maryland</option>
+				<option value="MA">Massachusetts</option>
+				<option value="MI">Michigan</option>
+				<option value="MN">Minnesota</option>
+				<option value="MS">Mississippi</option>
+				<option value="MO">Missouri</option>
+				<option value="MT">Montana</option>
+				<option value="NE">Nebraska</option>
+				<option value="NV">Nevada</option>
+				<option value="NH">New Hampshire</option>
+				<option value="NJ">New Jersey</option>
+				<option value="NM">New Mexico</option>
+				<option value="NY">New York</option>
+				<option value="NC">North Carolina</option>
+				<option value="ND">North Dakota</option>
+				<option value="OH">Ohio</option>
+				<option value="OK">Oklahoma</option>
+				<option value="OR">Oregon</option>
+				<option value="PA">Pennsylvania</option>
+				<option value="RI">Rhode Island</option>
+				<option value="SC">South Carolina</option>
+				<option value="SD">South Dakota</option>
+				<option value="TN">Tennessee</option>
+				<option value="TX">Texas</option>
+				<option value="UT">Utah</option>
+				<option value="VT">Vermont</option>
+				<option value="VA">Virginia</option>
+				<option value="WA">Washington</option>
+				<option value="WV">West Virginia</option>
+				<option value="WI">Wisconsin</option>
+				<option value="WY">Wyoming</option>
+			</select>	
+			<input type="submit" value="Add Event">		
+		</form>
+		<%= flash[:message] %>
+	</div>
+</body>
+</html>

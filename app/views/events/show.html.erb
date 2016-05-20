@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Event Detail</title>
+</head>
+<body>
+	<h1><%= @event.name %></h1>
+	<p>Host: <%= @event.user.first_name %></p>
+	<p>Location: <%= @event.location %></p>
+	<p>People who are joining the event: <%= @attendee_count %></p>
+
+	<h2>Other people attending this event:</h2>
+	<table border="1">
+		<tr>
+			<th>Name</th>
+			<th>Location</th>
+			<th>State</th>
+		</tr>
+	<% if @others %>
+		<% @others.each do |a| %>
+		<tr>
+			<td><%= a.first_name %></td>
+			<td><%= a.location %></td>
+			<td><%= a.state %></td>
+		</tr>
+		<% end %>
+	<% else %>
+		<p>No other attendees yet!</p>
+	<% end %>
+	</table>
+
+	<div>
+		<h2>Discussion about this event:</h2>
+		<% @comments.each do |comment| %>
+		<%= comment.text %><br>
+		- <%= comment.user.first_name %><br><br>
+		<% end %>
+		<form action="/comments" method="POST">
+			<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+			<input type="hidden" name="comment[user_id]" value="<%= current_user.id %>">
+			<input type="hidden" name="comment[event_id]" value="<%= @event.id %>">
+			<input type="text" name="comment[text]">
+			<input type="submit" name="Submit">
+		</form>
+	</div>
+</body>
+</html>
